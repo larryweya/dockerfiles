@@ -12,5 +12,5 @@ RUN apt-get install mongodb-10gen
 # Create the MongoDB data directory
 RUN mkdir -p /data/db
 
-EXPOSE 27017
-ENTRYPOINT ["usr/bin/mongod"]
+#EXPOSE 27017
+ENTRYPOINT ["/usr/bin/mongod"]
