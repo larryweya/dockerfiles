@@ -1,3 +1,4 @@
+import os
 # mysql
 #DATABASES = {
 #    'default': {
@@ -29,7 +30,7 @@ DATABASES = {
 TOUCHFORMS_URL = 'http://localhost:9000/'
 
 MONGO_DATABASE = {
-    'HOST': '192.168.1.5',
+    'HOST': os.environ['MONGO_IP'],
     'PORT': 27017,
     'NAME': 'formhub',
     'USER': '',
