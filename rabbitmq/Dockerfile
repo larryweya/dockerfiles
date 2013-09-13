@@ -7,4 +7,5 @@ RUN wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key
 RUN echo 'deb http://www.rabbitmq.com/debian/ testing main' | tee /etc/apt/sources.list.d/rabbitmq.list
 RUN apt-get update
 RUN apt-get install -y rabbitmq-server
-EXPOSE 5672:5672
+#EXPOSE 5672:5672
+CMD /usr/sbin/rabbitmq-server

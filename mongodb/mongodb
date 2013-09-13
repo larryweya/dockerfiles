@@ -1,0 +1,29 @@
+#!/bin/bash
+# Start/Stop/Restart MongoDB Docker Container
+
+DOCKER=/usr/bin/docker
+CID_FILE=/tmp/mongo.cid
+
+case "$1" in
+start)
+    $DOCKER run -d -cidfile $CID_FILE -d -v /data/db:/data/db larry/mongodb
+;;
+stop)
+    CONTAINER_ID=$(cat $CID_FILE)
+    if [ "$?" = "0" ]; then
+	echo "Stopping $CONTAINER_ID"
+	RESULT=$($DOCKER stop $CONTAINER_ID)
+	if [ "$RESULT" = "$CONTAINER_ID" ]; then
+	  echo "Removing $CID_FILE"
+	  rm $CID_FILE
+	else
+            exit 1
+	fi
+    else
+        exit 1
+    fi
+;;
+*)
+    echo "Usage $0 [start|stop]"
+    exit 1
+esac

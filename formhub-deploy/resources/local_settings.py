@@ -1,4 +1,8 @@
 import os
+
+DEBUG = False
+TEMPLATE_DEBUG = False
+ALLOWED_HOSTS = ['*']
 # mysql
 DATABASES = {
     'default': {
@@ -6,7 +10,7 @@ DATABASES = {
         'HOST': os.environ['MYSQL_HOST'],
         'NAME': 'formhub',
         'USER': 'formhub',
-        'PASSWORD': '',
+        'PASSWORD': 'watermelon',
     }
 }
 
@@ -37,3 +41,5 @@ MONGO_DATABASE = {
     'USER': '',
     'PASSWORD': ''
 }
+BROKER_URL='amqp://guest:guest@{RABBITMQ_HOST}:5672'.format(RABBITMQ_HOST=os.environ['RABBITMQ_HOST'])
+MEDIA_URL='/media/'
