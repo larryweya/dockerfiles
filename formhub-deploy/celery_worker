@@ -1,0 +1,60 @@
+#!/bin/bash
+# Start/Stop/Restart Formhub Docker Container
+
+DOCKER=/usr/bin/docker
+MONGO_CID_FILE=/tmp/mongo.cid
+MYSQL_CID_FILE=/tmp/mysql.cid
+RABBITMQ_CID_FILE=/tmp/rabbitmq.cid
+CID_FILE=/tmp/celery_worker.cid
+
+function get_ip_address
+{
+   local ip_address=$($DOCKER inspect "$1" | grep IPAddress | cut -d":" -f2 | cut -d'"' -f2)
+   echo "$ip_address"
+}
+
+case "$1" in
+start)
+    MONGO_CID=$(cat $MONGO_CID_FILE)
+    if [ "$?" -ne "0" ]; then
+        echo "MongoDB Container is not running"
+        exit 1
+    fi
+    MONGO_HOST=$(get_ip_address "$MONGO_CID")
+
+    MYSQL_CID=$(cat $MYSQL_CID_FILE)
+    if [ "$?" -ne "0" ]; then
+        echo "MySQL Container is not running"
+        exit 1
+    fi 
+    MYSQL_HOST=$(get_ip_address "$MYSQL_CID")
+
+    RABBITMQ_CID=$(cat $RABBITMQ_CID_FILE)
+    if [ "$?" -ne "0" ]; then
+        echo "RabbitMQ Container is not running"
+        exit 1
+    fi 
+    RABBITMQ_HOST=$(get_ip_address "$RABBITMQ_CID")
+
+    echo "Wohoo!"
+    $DOCKER run -d -cidfile $CID_FILE -v /data/media:/formhub/media -e MONGO_HOST="$MONGO_HOST" -e MYSQL_HOST="$MYSQL_HOST" -e RABBITMQ_HOST="$RABBITMQ_HOST" larry/formhub-deploy python manage.py celery worker --settings=formhub.settings --loglevel=info
+;;
+stop)
+    CONTAINER_ID=$(cat $CID_FILE)
+    if [ "$?" = "0" ]; then
+	echo "Stopping $CONTAINER_ID"
+	RESULT=$($DOCKER stop $CONTAINER_ID)
+	if [ "$RESULT" = "$CONTAINER_ID" ]; then
+	  echo "Removing $CID_FILE"
+	  rm $CID_FILE
+	else
+            exit 1
+	fi
+    else
+        exit 1
+    fi
+;;
+*)
+    echo "Usage $0 [start|stop]"
+    exit 1
+esac
