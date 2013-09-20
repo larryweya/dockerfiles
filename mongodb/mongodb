@@ -6,7 +6,7 @@ CID_FILE=/tmp/mongo.cid
 
 case "$1" in
 start)
-    $DOCKER run -d -cidfile $CID_FILE -d -v /data/db:/data/db larry/mongodb
+    $DOCKER run -d -cidfile $CID_FILE -v /data/db:/data/db larry/mongodb
 ;;
 stop)
     CONTAINER_ID=$(cat $CID_FILE)
