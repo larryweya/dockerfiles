@@ -5,6 +5,7 @@ DOCKER=/usr/bin/docker
 MONGO_CID_FILE=/tmp/mongo.cid
 MYSQL_CID_FILE=/tmp/mysql.cid
 RABBITMQ_CID_FILE=/tmp/rabbitmq.cid
+EXIM_CID_FILE=/tmp/exim.cid
 CID_FILE=/tmp/formhub.cid
 
 function get_ip_address
@@ -36,8 +37,15 @@ start)
     fi 
     RABBITMQ_HOST=$(get_ip_address "$RABBITMQ_CID")
 
+    EXIM_CID=$(cat $EXIM_CID_FILE)
+    if [ "$?" -ne "0" ]; then
+        echo "Exim Container is not running"
+        exit 1
+    fi 
+    EXIM_HOST=$(get_ip_address "$EXIM_CID")
+
     echo "Wohoo!"
-    $DOCKER run -d -cidfile $CID_FILE -p 3030:3030 -v /data/media:/formhub/media -e MONGO_HOST="$MONGO_HOST" -e MYSQL_HOST="$MYSQL_HOST" -e RABBITMQ_HOST="$RABBITMQ_HOST" larry/formhub-deploy
+    $DOCKER run -d -cidfile $CID_FILE -p 3030:3030 -v /data/media:/formhub/media -v /tmp:/tmp -e MONGO_HOST="$MONGO_HOST" -e MYSQL_HOST="$MYSQL_HOST" -e RABBITMQ_HOST="$RABBITMQ_HOST" -e SMTP_HOST="$EXIM_HOST" larry/formhub-deploy
 ;;
 stop)
     CONTAINER_ID=$(cat $CID_FILE)
