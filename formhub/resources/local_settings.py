@@ -46,6 +46,6 @@ MEDIA_URL='/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ['SMTP_HOST']
-ADMINS = ('info@joomla-limited.com',)
+ADMINS = ()
 SERVER_EMAIL = 'noreply@docker.ona.io'
 DEFAULT_FROM_EMAIL = 'postmaster@docker.ona.io'
